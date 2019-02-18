@@ -10,7 +10,7 @@ describe('main', function() {
           // other environment variables are same as development server in environment variables
           await server.start();
 
-          const response = await got('http://localhost:9001/api/study/listing', {timeout:500})
+          const response = await got('http://localhost/api/study/listing', {timeout:500})
           // Stop server
           await server.stop();
           expect(response.statusCode).to.equal(200);
@@ -21,7 +21,7 @@ describe('main', function() {
 
 				await server.start();
 
-				const response = await got.post('http://localhost:9001/api/study/create', 
+				const response = await got.post('http://localhost/api/study/create', 
 				{
 					json: true,
 					data: {
