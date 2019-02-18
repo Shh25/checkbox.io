@@ -12,7 +12,7 @@ describe('main', function() {
 
           const response = await got('http://localhost:9001/api/study/listing', {timeout:500})
           // Stop server
-          await main.stop();
+          await server.stop();
           expect(response.statusCode).to.equal(200);
       });
     });
