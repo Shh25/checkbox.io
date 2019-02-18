@@ -35,6 +35,5 @@ describe('main', function() {
 				await server.stop();
 				expect(response.statusCode).to.equal(200);
 			});
-			done();
 		});
   });
