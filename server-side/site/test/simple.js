@@ -15,5 +15,26 @@ describe('main', function() {
           await server.stop();
           expect(response.statusCode).to.equal(200);
       });
-    });
+
+			it('should start server on port 9001', async () => {
+				process.env['APP_PORT'] = 9001
+
+				await server.start();
+
+				const response = await got.post('http://localhost:9001/api/study/create', 
+				{
+					json: true,
+					data: {
+						name: 'demo-survey',
+						description: 'test if survey creation is working',
+						invitecode: 'RESEARCH',
+						studyKind: 'dataStudy'
+					}
+				});
+				// Stop server
+				await server.stop();
+				expect(response.statusCode).to.equal(200);
+			});
+			done();
+		});
   });
