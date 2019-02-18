@@ -85,15 +85,15 @@ app.post('/api/study/admin/notify/', admin.notifyParticipant);
 
 
 
-var appPort = process.env.APP_PORT;
+// var appPort = process.env.APP_PORT;
 // app.listen(port);
 // console.log(`Listening on port ${port}...`);
 
 function start() 
 {
-	return new Promise(function(resolve,reject)
+	return new Promise(function(resolve, reject)
 	{
-		server = app.listen(appPort, function () {
+		server = app.listen(process.env.APP_PORT, function () {
 
 			var host = server.address().address
 			var port = server.address().port

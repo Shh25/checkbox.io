@@ -6,7 +6,8 @@ const got   = require('got');
 describe('main', function() {
     describe('#start()', function() {
       it('should start server on port 9001', async () => {
-
+          process.env['APP_PORT'] = 9001
+          // other environment variables are same as development server in environment variables
           await server.start();
 
           const response = await got('http://localhost:9001/api/study/listing', {timeout:500})
