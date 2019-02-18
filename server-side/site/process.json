@@ -2,6 +2,6 @@
     "apps" : [{
       "name"        : "checkbox-server",
       "script"      : "./server.js",
-      "args"        : "start 3002"
+      "args"        : ""
     }]
 }
