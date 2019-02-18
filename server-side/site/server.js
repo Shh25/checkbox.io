@@ -115,11 +115,11 @@ function stop()
 	return server.close();
 }
 
-// (async () => {
-// 	if( CMD === "start" )
-// 	{
-// 		await start();
-// 	}
-// })();
+(async () => {
+	if( args[0] === "start" )
+	{
+		await start();
+	}
+})();
 
 module.exports = { start: start, stop: stop };

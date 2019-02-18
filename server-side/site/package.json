@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test": "mocha",
-    "start": "node server.js",
+    "start": "node server.js start",
     "deploy": "pm2 start process.json",
     "stop": "pm2 stop process.json"
   },
