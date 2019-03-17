@@ -8,7 +8,6 @@ var live = "/Users/prayanisingh/Documents/DevOpsProj/CheckBox/checkbox.io/server
 var study = "/Users/prayanisingh/Documents/DevOpsProj/CheckBox/checkbox.io/server-side/site/routes/study.js";
 var studyModel = "/Users/prayanisingh/Documents/DevOpsProj/CheckBox/checkbox.io/server-side/site/routes/studyModel.js";
 var upload = "/Users/prayanisingh/Documents/DevOpsProj/CheckBox/checkbox.io/server-side/site/routes/upload.js";
-
 var fileNameArr = [admin,create,csv,designer,live,study,studyModel,upload];
 
 function callAnalysis()
