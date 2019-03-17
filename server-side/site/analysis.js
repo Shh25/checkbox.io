@@ -19,7 +19,7 @@ function main(fileNameArr)
 }
 
  var builders = {};
- var maxFunctionLength = 0;
+ var MaxFunctionLength = 0;
 
  function FunctionBuilder()
 {
@@ -52,8 +52,8 @@ function main(fileNameArr)
 		);
 	}
 };
- 
 
+// A builder for storing file level information.
 function FileBuilder()
 {
 	this.FileName = "";
@@ -61,15 +61,17 @@ function FileBuilder()
 	this.Strings = 0;
 	// Number of imports in a file.
 	this.ImportCount = 0;
-    
+	this.MaxFunctionLength = 0;
+	this.MaxLineLength = 0;
+
 	this.report = function()
 	{
 		console.log (
 			( "{0}\n" +
 			  "~~~~~~~~~~~~\n"+
 			  "ImportCount {1}\t" +
-              "Strings {2}\n"
-			).format( this.FileName, this.ImportCount, this.Strings));
+			  "MaxFunctionLength {2}\n"
+			).format( this.FileName, this.ImportCount, this.MaxFunctionLength));
 	}
 }
 
@@ -97,13 +99,16 @@ function getMaxCondition(child){
     if(child==null){
         console.log(`returning child null`);
         return 0;
-    }
-    res = 1;
+	}
+	
     if(child.type=="LogicalExpression"){
+		res = 1;
         res = res + getMaxCondition(child.left) ;
         res = res + getMaxCondition(child.right);
-    }
-    return res;
+	}
+	 else return 0;
+	
+	 return res;
 
 }
 
@@ -115,12 +120,13 @@ function complexity(filePath)
 
 	var i = 0;
 
-    // A file level-builder:
+	// A file level-builder:
 	var fileBuilder = new FileBuilder();
 	fileBuilder.FileName = filePath;
     fileBuilder.ImportCount = 0;
-    fileBuilder.functionLength = 0;
-    
+    fileBuilder.MaxFunctionLength = 0;
+	fileBuilder.MaxLineLength = 0;
+
 	builders[filePath] = fileBuilder;
 
 	// Tranverse program with a function visitor.
@@ -142,20 +148,20 @@ function complexity(filePath)
 			builder.FunctionLength = node.loc.end.line - node.loc.start.line + 1;
 			
 			if(builder.FunctionLength > 100){
-				console.log(`Long method!`);
+				console.log(`Long method! ${builder.FunctionName}`);
 			}
 				//New code, we can also check isDecision() if truee, then wil calculate for other loops like while also
 			traverseWithParents(node, function(child)
 			{
-				if(isDecision(child))
+				if(child.type == 'IfStatement')
 				{
                     builder.SimpleCyclomaticComplexity++;
                     
                      if(child.test){
-						 builder.NumConditions = Math.floor(getMaxCondition(child.test)/2) +1;
+						 builder.NumConditions = getMaxCondition(child.test) +1;
 						}
 						if(child.consequent){
-							builder.NumConditions += Math.floor(getMaxCondition(child.test)/2);
+							builder.NumConditions += getMaxCondition(child.test);
 						}
 				}
 				if(builder.NumConditions > builder.MaxConditions){
@@ -166,8 +172,8 @@ function complexity(filePath)
 			
 		builder.SimpleCyclomaticComplexity++;
         
-       if(builder.FunctionLength > maxFunctionLength)
-            maxFunctionLength = builder.FunctionLength;
+        if(builder.FunctionLength > fileBuilder.MaxFunctionLength)
+		fileBuilder.MaxFunctionLength = builder.FunctionLength;
        		builders[builder.FunctionName] = builder;
         }
         
@@ -179,7 +185,6 @@ function complexity(filePath)
 		}
 		
 	});
-	console.log(`maxFunctionLength ${maxFunctionLength}`);
 }
 
 // Helper function for checking if a node is a "decision type node"
