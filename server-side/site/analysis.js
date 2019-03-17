@@ -5,8 +5,8 @@ var path = require( "path" );
 
 function main(fileNameArr)
 {
-    var filePath = fileNameArr;
-	console.log(`filePath in main` + filePath)
+	
+	var filePath = fileNameArr;
 	complexity(filePath);
 
 	// Report
@@ -15,45 +15,43 @@ function main(fileNameArr)
 		var builder = builders[node];
 		builder.report();
 	}
-    
+
 }
 
  var builders = {};
  var maxFunctionLength = 0;
 
  function FunctionBuilder()
- {
-     this.StartLine = 0;
-     this.FunctionName = "";
-     // The number of parameters for functions
-     this.ParameterCount  = 0,
-     // Number of if statements/loops + 1
-     this.SimpleCyclomaticComplexity = 0;
-     // The max depth of scopes (nested ifs, loops, etc)
-     this.MaxNestingDepth    = 0;
-     // The max number of conditions if one decision statement.
-     this.NumConditions = 0;
-     this.MaxConditions  = 0;
-     this.FunctionLength = 0;
- 
-     this.report = function()
-     {
-         console.log(
-            (
-                "{0}(): {1}\n" +
-                "============\n" +
-                "SimpleCyclomaticComplexity: {2}\t" +
-                 "MaxNestingDepth: {3}\t" +
-                 "MaxConditions: {4}\t" +
-                 "Parameters: {5}\n\n"+
-                 "FunctionLength: {6}"
-             )
-             .format(this.FunctionName, this.StartLine,
-                      this.SimpleCyclomaticComplexity, this.MaxNestingDepth,
-                     this.MaxConditions, this.ParameterCount, this.FunctionLength)
-         );
-     }
- };
+{
+	this.StartLine = 0;
+	this.FunctionName = "";
+	// The number of parameters for functions
+	this.ParameterCount  = 0,
+	// Number of if statements/loops + 1
+	this.SimpleCyclomaticComplexity = 0;
+	// The max depth of scopes (nested ifs, loops, etc)
+	this.MaxNestingDepth    = 0;
+	// The max number of conditions if one decision statement.
+	this.NumConditions = 0;
+	this.MaxConditions  = 0;
+    this.FunctionLength = 0;
+
+	this.report = function()
+	{
+		console.log(
+		   (
+		   	"{0}(): {1}\n" +
+		   	"============\n" +
+			   "SimpleCyclomaticComplexity: {2}\t" +
+				"MaxConditions: {3}\t" +
+                "Parameters: {4}\n\n"+
+                "FunctionLength: {5}"
+			)
+			.format(this.FunctionName, this.StartLine,
+				     this.SimpleCyclomaticComplexity, this.MaxConditions, this.ParameterCount, this.FunctionLength)
+		);
+	}
+};
  
 
  function FileBuilder()
@@ -70,9 +68,10 @@ function main(fileNameArr)
 		console.log (
 			( "{0}\n" +
 			  "~~~~~~~~~~~~\n"+
-              "Strings {1}\n"+
-              "functionLength {2}\n"
-			).format( this.FileName, this.Strings, this.functionLength ));
+			  "ImportCount {1}\t" +
+              "Strings {2}\n"+
+              "functionLength {3}\n"
+			).format( this.FileName, this.ImportCount, this.Strings, this.functionLength ));
 	}
 }
 
@@ -113,15 +112,12 @@ function getMaxCondition(child){
 
 function complexity(filePath)
 {
-	console.log(`filePath  ${filePath}`);
 	var buf = fs.readFileSync(filePath, "utf8");
-	console.log(`buf  ${buf}`);
-	
 	var ast = esprima.parse(buf, options);
 
 	var i = 0;
 
-	// A file level-builder:
+    // A file level-builder:
 	var fileBuilder = new FileBuilder();
 	fileBuilder.FileName = filePath;
     fileBuilder.ImportCount = 0;
@@ -166,18 +162,13 @@ function complexity(filePath)
 				}
 				if(builder.NumConditions > builder.MaxConditions){
 					builder.MaxConditions = builder.NumConditions;
-					console.log(`builder.MaxConditions  : ${builder.MaxConditions }`)
 				}
 			});
 
 			
 		builder.SimpleCyclomaticComplexity++;
         
-        //Max function length
-        // if(node.body.type == 'BlockStatement'){
-            
-        console.log(`builder.FunctionLength: ${builder.FunctionLength}`);
-        if(builder.FunctionLength > maxFunctionLength)
+       if(builder.FunctionLength > maxFunctionLength)
             maxFunctionLength = builder.FunctionLength;
        		builders[builder.FunctionName] = builder;
         }
@@ -190,8 +181,7 @@ function complexity(filePath)
 		}
 		
 	});
-
-	
+	console.log(`maxFunctionLength ${maxFunctionLength}`);
 }
 
 // Helper function for checking if a node is a "decision type node"
