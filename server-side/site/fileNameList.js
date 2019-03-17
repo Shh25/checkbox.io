@@ -11,16 +11,12 @@ var upload = "/Users/prayanisingh/Documents/DevOpsProj/CheckBox/checkbox.io/serv
 
 var fileNameArr = [admin,create,csv,designer,live,study,studyModel,upload];
 
-console.log(`shds ${fileNameArr[0]}`)
 function callAnalysis()
 {
     var i;
-    console.log(`shds ${fileNameArr[0]}`)
     for(var i =0; i<fileNameArr.length; i++){
-        console.log(`fileNameArr[i] ${fileNameArr[i]}`);
         n.main(fileNameArr[i]);
         
     }
 }
 callAnalysis();
-console.log(`Going to next file: `);
