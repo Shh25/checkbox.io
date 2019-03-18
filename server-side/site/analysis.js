@@ -20,7 +20,6 @@ function main(fileNameArr)
 }
 
  var builders = {};
- var MaxFunctionLength = 0;
  var fileBuilder = new FileBuilder();
 
  function FunctionBuilder()
@@ -36,7 +35,7 @@ function main(fileNameArr)
 	// The max number of conditions if one decision statement.
 	this.NumConditions = 0;
 	this.MaxConditions  = 0;
-    this.FunctionLength = 0;
+	this.FunctionLength = 0;
 
 	this.report = function()
 	{
@@ -208,17 +207,9 @@ function complexity(filePath)
 			console.log(process.argv[4])
 		}
 			
-		builder.SimpleCyclomaticComplexity++;
-        
         if(builder.FunctionLength > fileBuilder.MaxFunctionLength)
 		fileBuilder.MaxFunctionLength = builder.FunctionLength;
        		builders[builder.FunctionName] = builder;
-		}
-		//new code String count
-		if(node.type=="Literal" && typeof(node.value)=='string'){
-
-			//console.log("Count of strings: ");
-			fileBuilder.Strings++;
 		}
 		
 	});
