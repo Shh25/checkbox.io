@@ -8,7 +8,6 @@ var live = "routes/live.js";
 var study = "routes/study.js";
 var studyModel = "routes/studyModel.js";
 var upload = "routes/upload.js";
-var testing = "routes/testing.js";
 
 var fileNameArr = [testing, admin,create,csv,designer,live,study,studyModel,upload];
 
