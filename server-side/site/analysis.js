@@ -9,7 +9,7 @@ function main(fileNameArr)
 	var filePath = fileNameArr;
 	complexity(filePath);
 
-	getMaxCharacters(filePath);
+	//getMaxCharacters(filePath);
 	// Report
 	for( var node in builders )
 	{
