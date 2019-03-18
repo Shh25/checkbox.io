@@ -2,6 +2,17 @@ const assert = require('assert');
 const expect = require('chai').expect;
 const server = require('../server')
 const got   = require('got');
+var mongo = require('mongodb');
+
+ 
+
+var MongoClient = mongo.MongoClient;
+var db = null;
+MongoClient.connect("mongodb://"+process.env.MONGO_USER+":"+process.env.MONGO_PASSWORD+"@"+process.env.MONGO_IP+":27017/site?authSource=admin", function(err, authdb) {
+  // Now you can use the database in the db variable
+  db = authdb;
+  console.log( err || "connected!" );
+});
 
 describe('main', function() {
     describe('#start()', function() {

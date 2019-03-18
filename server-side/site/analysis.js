@@ -167,8 +167,9 @@ function complexity(filePath)
             //method length to calculate long method
 			builder.FunctionLength = node.loc.end.line - node.loc.start.line + 1;
 			
-			if(builder.FunctionLength > 100){
+			if(builder.FunctionLength > 50){
 				console.log(`Long method! ${builder.FunctionName}`);
+				console.log('--- CHECKBOX: BUILD FAILURE ---');
 			}
 			//New code, we can also check isIfCondition() if truee, then wil calculate for other loops like while also
 			traverseWithParents(node, function(child)
