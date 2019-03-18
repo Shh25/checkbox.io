@@ -139,8 +139,8 @@ function getMaxCharacters(filePath){
 			if (index === arr.length - 1 && line === "") { return; }
 			lineLength = line.split(" ").join("").length;
 			
-			if(line.split(" ").join("").length > 165){
-				console.log(`--- CHECKBOX: BUILD FAILURE CHARACTER COUNT EXCEEDED---` + `\n Maximum character exceeded. Count : ` + lineLength);
+			if(line.split(" ").join("").length > process.argv[2]){
+				console.log(` CHECKBOX: WARNING CHARACTER COUNT EXCEEDED` + `\n Maximum character exceeded. Count : ` + lineLength);
 			}
 			if(lineLength > fileBuilder.MaxLineLength){
 				fileBuilder.MaxLineLength = lineLength;
@@ -183,9 +183,8 @@ function complexity(filePath)
             //method length to calculate long method
 			builder.FunctionLength = node.loc.end.line - node.loc.start.line + 1;
 			
-			if(builder.FunctionLength > 80){
-				console.log(`Long method! ${builder.FunctionName}`);
-				console.log('--- CHECKBOX: BUILD FAILURE - LONG METHOD ---');
+			if(builder.FunctionLength > process.argv[3]){
+				console.log(`CHECKBOX: WARNING LONG METHOD ${builder.FunctionName}`);
 			}
 			//New code, we can also check isIfCondition() if truee, then wil calculate for other loops like while also
 			traverseWithParents(node, function(child)
@@ -201,14 +200,18 @@ function complexity(filePath)
 					builder.MaxConditions = builder.NumConditions;
 				}
 			});
-
+		
+		if(builder.MaxConditions > process.argv[4]){
+			console.log(` CHECKBOX: WARNING MaxConditions ${builder.MaxConditions}`);
+			console.log(process.argv[4])
+		}
+			
 		builder.SimpleCyclomaticComplexity++;
         
         if(builder.FunctionLength > fileBuilder.MaxFunctionLength)
 		fileBuilder.MaxFunctionLength = builder.FunctionLength;
        		builders[builder.FunctionName] = builder;
-        }
-        
+		}
 		//new code String count
 		if(node.type=="Literal" && typeof(node.value)=='string'){
 
