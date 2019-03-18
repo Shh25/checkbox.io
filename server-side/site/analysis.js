@@ -9,6 +9,7 @@ function main(fileNameArr)
 	var filePath = fileNameArr;
 	complexity(filePath);
 
+	getMaxCharacters(filePath);
 	// Report
 	for( var node in builders )
 	{
@@ -70,8 +71,9 @@ function FileBuilder()
 			( "{0}\n" +
 			  "~~~~~~~~~~~~\n"+
 			  "ImportCount {1}\t" +
-			  "MaxFunctionLength {2}\n"
-			).format( this.FileName, this.ImportCount, this.MaxFunctionLength));
+			  "MaxFunctionLength {2}\t" +
+			  "MaxLineLength {3}\n"
+			).format( this.FileName, this.ImportCount, this.MaxFunctionLength, this.MaxLineLength));
 	}
 }
 
@@ -127,11 +129,15 @@ function complexity(filePath)
     fileBuilder.MaxFunctionLength = 0;
 	fileBuilder.MaxLineLength = 0;
 
+
 	builders[filePath] = fileBuilder;
 
 	// Tranverse program with a function visitor.
 	traverseWithParents(ast, function (node) 
 	{
+		if(node.range)
+		fileBuilder.MaxLineLength = node.range;
+
 		if (node.type === 'FunctionDeclaration' || node.type == 'FunctionExpression') 
 		{
             var builder = new FunctionBuilder();
@@ -143,7 +149,7 @@ function complexity(filePath)
 			builder.ParameterCount = node.params.length;
             builder.MaxConditions = 0;
 			builder.NumConditions = 0;
-
+			
             //method length to calculate long method
 			builder.FunctionLength = node.loc.end.line - node.loc.start.line + 1;
 			
