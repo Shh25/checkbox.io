@@ -96,22 +96,36 @@ function traverseWithParents(object, visitor)
     }
 }
 
-function getMaxCondition(child){
-   
-    if(child==null){
-        console.log(`returning child null`);
-        return 0;
+function getMaxCondition(child, isIfStatement) {
+	// console.log('in')
+	res = 0;
+    if(child == null){
+		console.log(`returning child null`);
+		res = 0;
+    } else if( child.type == 'IfStatement' || child.type == 'ForStatement' || child.type == 'WhileStatement' ||
+	child.type == 'ForInStatement' || child.type == 'DoWhileStatement') {
+		if(child.type == 'IfStatement') {
+			isIfStatement = true;
+		}
+		if(child.test) {
+			res += getMaxCondition(child.test, isIfStatement);
+		}
+		if(child.consequent) {
+			res += getMaxCondition(child.consequent, isIfStatement);
+		}
+		if(child.body){
+			for(var i = 0; i < child.body.length; i++) {
+				if(child.body[i].type === 'IfStatement') {
+					res += getMaxCondition(child.body[i], isIfStatement);
+				}
+			}
+		}
+	} else if(isIfStatement && child.type=="LogicalExpression"){
+		res += getMaxCondition(child.left, isIfStatement) + getMaxCondition(child.right, isIfStatement);
+	} else if(isIfStatement && (child.type=="BinaryExpression" || child.type=='UnaryExpression')){
+		res += 1;
 	}
-	
-    if(child.type=="LogicalExpression"){
-		res = 1;
-        res = res + getMaxCondition(child.left) ;
-        res = res + getMaxCondition(child.right);
-	}
-	 else return 0;
-	
-	 return res;
-
+	return res;
 }
 
 
@@ -156,26 +170,21 @@ function complexity(filePath)
 			if(builder.FunctionLength > 100){
 				console.log(`Long method! ${builder.FunctionName}`);
 			}
-				//New code, we can also check isDecision() if truee, then wil calculate for other loops like while also
+			//New code, we can also check isIfCondition() if truee, then wil calculate for other loops like while also
 			traverseWithParents(node, function(child)
 			{
-				if(child.type == 'IfStatement')
+				if( child.type == 'IfStatement' || child.type == 'ForStatement' || child.type == 'WhileStatement' ||
+				child.type == 'ForInStatement' || child.type == 'DoWhileStatement')
 				{
                     builder.SimpleCyclomaticComplexity++;
-                    
-                     if(child.test){
-						 builder.NumConditions = getMaxCondition(child.test) +1;
-						}
-						if(child.consequent){
-							builder.NumConditions += getMaxCondition(child.test);
-						}
+					builder.NumConditions += getMaxCondition(child);
+
 				}
 				if(builder.NumConditions > builder.MaxConditions){
 					builder.MaxConditions = builder.NumConditions;
 				}
 			});
 
-			
 		builder.SimpleCyclomaticComplexity++;
         
         if(builder.FunctionLength > fileBuilder.MaxFunctionLength)
@@ -193,16 +202,15 @@ function complexity(filePath)
 	});
 }
 
-// Helper function for checking if a node is a "decision type node"
-function isDecision(node)
-{
-	if( node.type == 'IfStatement' || node.type == 'ForStatement' || node.type == 'WhileStatement' ||
-		 node.type == 'ForInStatement' || node.type == 'DoWhileStatement')
-	{
-		return true;
-	}
-	return false;
-}
+// // Helper function for checking if a node is a "decision type node"
+// function isIfCondition(node)
+// {
+// 	if( node.type == 'IfStatement')
+// 	{
+// 		return true;
+// 	}
+// 	return false;
+// }
 
 // Helper function for printing out function name.
 function functionName( node )
