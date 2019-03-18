@@ -21,6 +21,7 @@ function main(fileNameArr)
 
  var builders = {};
  var MaxFunctionLength = 0;
+ var fileBuilder = new FileBuilder();
 
  function FunctionBuilder()
 {
@@ -41,11 +42,11 @@ function main(fileNameArr)
 	{
 		console.log(
 		   (
-		   	"{0}(): {1}\n" +
-		   	"============\n" +
-			  	"MaxConditions: {2}\t" +
-                "Parameters: {3}\n\n"+
-                "FunctionLength: {4}"
+			"========================================================\n\n" +
+		   	"Function Name: {0}(): at Line: {1}\n" +
+		   	"Maximum number of If conditions in the function: {2}\n" +
+                "Number of Parameters for the functions: {3}\n"+
+                "Length of the function: {4}\n\n"
 			)
 			.format(this.FunctionName, this.StartLine, this.MaxConditions, 
 				this.ParameterCount, this.FunctionLength)
@@ -63,14 +64,16 @@ function FileBuilder()
 	this.ImportCount = 0;
 	this.MaxFunctionLength = 0;
 	this.MaxLineLength = 0;
+	this.MaxCharacterCount = 0;
 
 	this.report = function()
 	{
 		console.log (
 			( "{0}\n" +
 			  "~~~~~~~~~~~~\n"+
-			  "MaxFunctionLength {1}\t" 
-			).format( this.FileName, this.MaxFunctionLength));
+			  "Maximum Character on a line in file {0} is : {2}"+
+			  "\nMaxFunctionLength for file {0} is : {1}\t\n\n\n" 
+			).format( this.FileName, this.MaxFunctionLength, this.MaxCharacterCount));
 	}
 }
 
@@ -130,9 +133,8 @@ function getMaxCharacters(filePath){
 	
 		var buf = fs.readFileSync(filePath, "utf8");
 		var fileString = buf.toString();
-		var fileBuilder = new FileBuilder();
-		fileBuilder.MaxLineLength = 0;
 		var lineLength = 0;
+		fileBuilder.MaxCharacterCount = 0;
 
 		fs.readFileSync(filePath,"utf8").toString().split("\n").forEach(function(line, index, arr) {
 			
@@ -142,8 +144,8 @@ function getMaxCharacters(filePath){
 			if(line.split(" ").join("").length > process.argv[2]){
 				console.log(` CHECKBOX: WARNING CHARACTER COUNT EXCEEDED` + `\n Maximum character exceeded. Count : ` + lineLength);
 			}
-			if(lineLength > fileBuilder.MaxLineLength){
-				fileBuilder.MaxLineLength = lineLength;
+			if(lineLength > fileBuilder.MaxCharacterCount){
+				fileBuilder.MaxCharacterCount = lineLength;
 			}
 			
 		  });
@@ -158,7 +160,7 @@ function complexity(filePath)
 	var i = 0;
 
 	// A file level-builder:
-	var fileBuilder = new FileBuilder();
+	
 	fileBuilder.FileName = filePath;
     fileBuilder.ImportCount = 0;
     fileBuilder.MaxFunctionLength = 0;
