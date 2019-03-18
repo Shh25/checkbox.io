@@ -70,7 +70,7 @@ function FileBuilder()
 	{
 		console.log (
 			( "{0}\n" +
-			  "~~~~~~~~~~~~\n"+
+			  "~~~~~~~~~~~~\n\n"+
 			  "Maximum Character on a line in file {0} is : {2}"+
 			  "\nMaxFunctionLength for file {0} is : {1}\t\n\n\n" 
 			).format( this.FileName, this.MaxFunctionLength, this.MaxCharacterCount));
