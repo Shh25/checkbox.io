@@ -9,7 +9,7 @@ function main(fileNameArr)
 	var filePath = fileNameArr;
 	complexity(filePath);
 
-	//getMaxCharacters(filePath);
+	getMaxCharacters(filePath);
 	// Report
 	for( var node in builders )
 	{
@@ -43,13 +43,12 @@ function main(fileNameArr)
 		   (
 		   	"{0}(): {1}\n" +
 		   	"============\n" +
-			   "SimpleCyclomaticComplexity: {2}\t" +
-				"MaxConditions: {3}\t" +
-                "Parameters: {4}\n\n"+
-                "FunctionLength: {5}"
+			  	"MaxConditions: {2}\t" +
+                "Parameters: {3}\n\n"+
+                "FunctionLength: {4}"
 			)
-			.format(this.FunctionName, this.StartLine,
-				     this.SimpleCyclomaticComplexity, this.MaxConditions, this.ParameterCount, this.FunctionLength)
+			.format(this.FunctionName, this.StartLine, this.MaxConditions, 
+				this.ParameterCount, this.FunctionLength)
 		);
 	}
 };
@@ -70,10 +69,8 @@ function FileBuilder()
 		console.log (
 			( "{0}\n" +
 			  "~~~~~~~~~~~~\n"+
-			  "ImportCount {1}\t" +
-			  "MaxFunctionLength {2}\t" +
-			  "MaxLineLength {3}\n"
-			).format( this.FileName, this.ImportCount, this.MaxFunctionLength, this.MaxLineLength));
+			  "MaxFunctionLength {1}\t" 
+			).format( this.FileName, this.MaxFunctionLength));
 	}
 }
 
@@ -128,6 +125,30 @@ function getMaxCondition(child, isIfStatement) {
 	return res;
 }
 
+// Free-style: calculate if characters on a line exceed count 150.
+function getMaxCharacters(filePath){
+	
+		var buf = fs.readFileSync(filePath, "utf8");
+		var fileString = buf.toString();
+		var fileBuilder = new FileBuilder();
+		fileBuilder.MaxLineLength = 0;
+		var lineLength = 0;
+
+		fs.readFileSync(filePath,"utf8").toString().split("\n").forEach(function(line, index, arr) {
+			
+			if (index === arr.length - 1 && line === "") { return; }
+			lineLength = line.split(" ").join("").length;
+			
+			if(line.split(" ").join("").length > 150){
+				console.log(`--- CHECKBOX: BUILD FAILURE ---` + `\n Maximum character exceeded. Count : ` + lineLength);
+			}
+			if(lineLength > fileBuilder.MaxLineLength){
+				fileBuilder.MaxLineLength = lineLength;
+			}
+			
+		  });
+	}
+
 
 function complexity(filePath)
 {
@@ -141,17 +162,12 @@ function complexity(filePath)
 	fileBuilder.FileName = filePath;
     fileBuilder.ImportCount = 0;
     fileBuilder.MaxFunctionLength = 0;
-	fileBuilder.MaxLineLength = 0;
-
 
 	builders[filePath] = fileBuilder;
 
 	// Tranverse program with a function visitor.
 	traverseWithParents(ast, function (node) 
 	{
-		if(node.range)
-		fileBuilder.MaxLineLength = node.range;
-
 		if (node.type === 'FunctionDeclaration' || node.type == 'FunctionExpression') 
 		{
             var builder = new FunctionBuilder();
@@ -202,16 +218,6 @@ function complexity(filePath)
 		
 	});
 }
-
-// // Helper function for checking if a node is a "decision type node"
-// function isIfCondition(node)
-// {
-// 	if( node.type == 'IfStatement')
-// 	{
-// 		return true;
-// 	}
-// 	return false;
-// }
 
 // Helper function for printing out function name.
 function functionName( node )
