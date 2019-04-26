@@ -1,5 +1,7 @@
 var express = require('express'),
-        cors = require('cors'),
+				cors = require('cors'),
+				got = require('got');
+				rp = require('request-promise');
 	marqdown = require('./marqdown.js'),
 	//routes = require('./routes/designer.js'),
 	//votes = require('./routes/live.js'),
@@ -31,7 +33,25 @@ app.post('/api/design/survey',
 	{
 		console.log(req.body.markdown);
 		//var text = marqdown.render( req.query.markdown );
-		var text = marqdown.render( req.body.markdown );
+		//var text = marqdown.render( req.body.markdown );
+		var text = "";
+		var options = {
+			method: 'POST',
+			uri: 'http://35.196.178.11:8080/markdown',
+			body: {
+					some: 'payload'
+			},
+			json: true // Automatically stringifies the body to JSON
+	};
+
+	rp(options)
+    .then(function (parsedBody) {
+			text = marqdown.render("http://35.196.178.11:8080/markdown");
+    })
+    .catch(function (err) {
+			console.log(err);
+    });
+
 		res.send( {preview: text} );
 	}
 );
