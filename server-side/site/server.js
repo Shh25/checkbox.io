@@ -46,7 +46,7 @@ app.post('/api/design/survey',
 
 	rp(options)
     .then(function (parsedBody) {
-			text = marqdown.render("http://35.196.178.11:8080/markdown");
+			text = parsedBody;
     })
     .catch(function (err) {
 			console.log(err);
