@@ -37,7 +37,7 @@ app.post('/api/design/survey',
 		var text = "";
 		var options = {
 			method: 'POST',
-			uri: 'http://35.196.178.11:8080/markdown',
+			uri: `http://${process.env.IP_ADDRESS}:8080/markdown`,
 			body: {
 					some: 'payload'
 			},
