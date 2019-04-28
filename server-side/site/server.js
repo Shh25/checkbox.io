@@ -1,8 +1,30 @@
-var express = require('express'),
-				cors = require('cors'),
-				got = require('got');
-				rp = require('request-promise');
-	marqdown = require('./marqdown.js'),
+const express = require('express');
+const bodyParser = require('body-parser');
+ 
+// Use the prom-client module to expose our metrics to Prometheus
+const client = require('prom-client');
+ 
+// enable prom-client to expose default application metrics
+const collectDefaultMetrics = client.collectDefaultMetrics;
+ 
+// define a custom prefix string for application metrics
+collectDefaultMetrics({ prefix: 'my_application:' });
+ 
+// a custom histogram metric which represents the latency
+// of each call to our API.
+const histogram = new client.Histogram({
+  name: 'my_application:hello_duration',
+  help: 'Duration of HTTP requests in ms',
+  labelNames: ['method', 'status_code'],
+  buckets: [0.1, 5, 15, 50, 100, 500]
+});
+
+
+			var cors = require('cors'),
+                               got = require('got');
+                               rp = require('request-promise');
+       marqdown = require('./marqdown.js'),
+
 	//routes = require('./routes/designer.js'),
 	//votes = require('./routes/live.js'),
 	//upload = require('./routes/upload.js'),
@@ -34,6 +56,10 @@ app.post('/api/design/survey',
 		console.log(req.body.markdown);
 		//var text = marqdown.render( req.query.markdown );
 		//var text = marqdown.render( req.body.markdown );
+
+		// start the timer for our custom metric - this returns a function
+  		// called later to stop the timer
+		const end = histogram.startTimer();
 		var text = "";
 		var options = {
 			method: 'POST',
@@ -53,8 +79,16 @@ app.post('/api/design/survey',
     });
 
 		res.send( {preview: text} );
+		  // stop the timer
+		 end({ method: request.method, 'status_code': 200 });
 	}
 );
+
+// expose our metrics at the default URL for Prometheus
+app.get('/metrics', (request, response) => {
+  response.set('Content-Type', client.register.contentType);
+  response.send(client.register.metrics());
+});
 
 //app.get('/api/design/survey/all', routes.findAll );
 //app.get('/api/design/survey/:id', routes.findById );

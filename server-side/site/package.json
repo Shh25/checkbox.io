@@ -31,6 +31,7 @@
     "request-promise": "^4.2.4",
     "sloc": "^0.2.1",
     "underscore": "^1.8.3",
-    "validator": "^6.2.1"
+    "validator": "^6.2.1",
+    "prom-client": "^11.3.0"
   }
 }
