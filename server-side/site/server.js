@@ -1,3 +1,4 @@
+
 var express = require('express'),
 				cors = require('cors'),
 				got = require('got');
@@ -31,28 +32,18 @@ app.options('/api/study/vote/submit/', cors(corsOptions));
 app.post('/api/design/survey', 
 	function(req,res)
 	{
-		console.log(req.body.markdown);
-		//var text = marqdown.render( req.query.markdown );
-		//var text = marqdown.render( req.body.markdown );
-		var text = "";
-		var options = {
-			method: 'POST',
-			uri: `http://${process.env.IP_ADDRESS}:8080/markdown`,
-			body: {
-					some: 'payload'
-			},
-			json: true // Automatically stringifies the body to JSON
-	};
-
-	rp(options)
-    .then(function (parsedBody) {
-			text = parsedBody;
-			res.send( {preview: text} );
-	})
-    .catch(function (err) {
+		console.log('Markdown body: ', req.body.markdown);
+		var headers = {"Content-type":"application/json"}
+		got.post(`http://${process.env.IP_ADDRESS}:8080/markdown`, {headers: headers, json: true, body: req.body})
+		.then(function(response){
+			console.log(response.body.preview);
+			var text = response.body;
+			res.send( text );
+		})
+		.catch(function (err) {
 			console.log(err);
 			res.send({'error': err});
-    });
+		});
 
 	}
 );
