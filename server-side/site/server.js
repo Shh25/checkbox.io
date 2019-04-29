@@ -47,12 +47,13 @@ app.post('/api/design/survey',
 	rp(options)
     .then(function (parsedBody) {
 			text = parsedBody;
-    })
+			res.send( {preview: text} );
+	})
     .catch(function (err) {
 			console.log(err);
+			res.send({'error': err});
     });
 
-		res.send( {preview: text} );
 	}
 );
 
